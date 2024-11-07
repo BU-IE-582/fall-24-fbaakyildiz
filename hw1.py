@@ -45,3 +45,6 @@ print(loadings_df)
 # Reset display options if needed
 pd.reset_option("display.max_rows")
 pd.reset_option("display.max_columns")
+
+#test
+#s
