@@ -18,25 +18,25 @@ combined_data_scaled = scaler.fit_transform(combined_data)
 pca = PCA()
 pca.fit(combined_data_scaled)
 
-# Get the explained variance ratio and cumulative variance
-explained_variance = pca.explained_variance_ratio_
+# Get explained variance and cumulative variance for the first three components
+explained_variance = pca.explained_variance_ratio_[:3]
 cumulative_variance = explained_variance.cumsum()
 
-# Create a DataFrame for explained variance and cumulative variance
+# Create a DataFrame for explained variance and cumulative variance for PC1 to PC3
 explained_variance_df = pd.DataFrame({
-    'Principal Component': [f'PC{i+1}' for i in range(len(explained_variance))],
+    'Principal Component': [f'PC{i+1}' for i in range(3)],
     'Explained Variance Ratio': explained_variance,
     'Cumulative Variance Ratio': cumulative_variance
 })
 
-# Get loadings (eigenvectors) for each principal component
-loadings = pca.components_
-loadings_df = pd.DataFrame(loadings, columns=combined_data.columns)
-loadings_df.index = [f'PC{i+1}' for i in range(len(loadings))]
+# Get loadings (eigenvectors) for PC1 to PC3, showing only the first 11 features
+loadings = pca.components_[:3, :11]
+loadings_df = pd.DataFrame(loadings, columns=combined_data.columns[:11])
+loadings_df.index = [f'PC{i+1}' for i in range(3)]
 
-# Display results
-print("Explained Variance and Cumulative Variance for Each Principal Component:")
+# Display results for PC1 to PC3
+print("Explained Variance and Cumulative Variance for PC1 to PC3:")
 print(explained_variance_df)
 
-print("\nLoadings (Contribution of Each Feature to Each Principal Component):")
+print("\nLoadings (Contribution of Each of the First 11 Features to PC1 to PC3):")
 print(loadings_df)
