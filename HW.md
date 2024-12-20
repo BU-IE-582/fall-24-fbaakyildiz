@@ -44,7 +44,8 @@ for column in data.columns:
         data[column] = data.groupby('fixture_id')[column].transform(lambda x: x.fillna(x.mean()))
 
 # Fill any remaining missing values with 0
-data.fillna(0, inplace=True)```
+data.fillna(0, inplace=True)
+```
 
 We cleaned the dataset by removing unreliable rows where 'suspended' or 'stopped' was True and dropped rows with missing 'current_state' values. Missing data in other columns was imputed using the mean of each 'fixture_id' group, and any remaining missing values were filled with 0 to ensure data completeness and consistency for analysis.
 
@@ -63,7 +64,8 @@ data['normalized_draw_chance'] = data['draw_chance'] / data['total_probability']
 data['normalized_away_prob'] = data['away_prob'] / data['total_probability']
 
 # Calculate the difference between home win and away win probabilities
-data['home_away_diff'] = data['normalized_home_prob'] - data['normalized_away_prob']```
+data['home_away_diff'] = data['normalized_home_prob'] - data['normalized_away_prob']
+```
 
 **Task 1.2** 
 ```python
@@ -79,7 +81,8 @@ bin_analysis = data.groupby('diff_bin').agg(
 ).reset_index()
 
 # Display the result of the bin analysis
-print(bin_analysis)```
+print(bin_analysis)
+```
 
 **Task 1.3**
 ```python
@@ -96,7 +99,8 @@ second_half_bin_analysis = second_half_data.groupby('diff_bin')['result'].apply(
 second_half_bin_analysis.columns = ['Bin', 'Draw_Probability']
 
 # Plot draw probability for both halves using scatter plots
-plt.figure(figsize=(12, 6))```
+plt.figure(figsize=(12, 6))
+```
 
 **Task 1.4**
 
@@ -123,7 +127,8 @@ filtered_data = filtered_data[~filtered_data['fixture_id'].isin(matches_to_remov
 
 # Count removed matches for early red cards
 removed_early_red_card_count = len(early_red_card_games)
-print(f"Number of matches removed due to early red cards: {removed_early_red_card_count}")```
+print(f"Number of matches removed due to early red cards: {removed_early_red_card_count}")
+```
 
 For speaking in the favor of the probability distribution graph the highest draw probabilities (≈0.6) occur around P(Home) - P(Away) ≈ 0, indicating that balanced matches are most likely to result in draws.
 This reinforces the natural equilibrium in football when teams are evenly matched, as neither team can dominate or break the tie effectively.
@@ -182,7 +187,8 @@ print(f'Accuracy: {accuracy * 100:.2f}%')
 cm = confusion_matrix(y_test, y_pred)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
 plt.title("Confusion Matrix")
-plt.show()```
+plt.show()
+```
 
 ```python
 # Analyze misclassified samples
@@ -199,7 +205,8 @@ error_summary = time_analysis.groupby(['halftime', 'minute', 'true_label', 'pred
 
 # Print error summary
 print("Summary of misclassifications:")
-print(error_summary)```
+print(error_summary)
+```
 
 ```python
 # Select relevant columns for time analysis
@@ -229,7 +236,8 @@ print(halftime_errors)
 # Identify specific minutes with highest errors
 minute_error_summary = time_analysis['minute'].value_counts().head(10)
 print("Top 10 minutes with highest errors:")
-print(minute_error_summary)```
+print(minute_error_summary)
+```
 
 The decision tree achieved nearly 96% accuracy, but misclassifications highlight trends in specific game periods. Errors are most common in the early minutes (e.g., 3rd, 4th, and 6th minutes) due to limited early-game data, leading the model to rely on pre-game probabilities. The range of errors spans from the start to minute 56, with more errors in the first half (446 vs. 270 in the second half). Key minutes, such as the first 10, account for the highest errors, indicating that additional features or real-time data could improve model predictions during these periods.
 
@@ -243,7 +251,8 @@ feature_importances = pd.DataFrame({
 # Sort feature importances
 feature_importances = feature_importances.sort_values(by='Importance', ascending=False)
 print("Feature Importances:")
-print(feature_importances)```
+print(feature_importances)
+```
 
 The feature importance analysis highlights P_diff (0.192) as the most critical predictor, reflecting its alignment with probability-driven match outcomes. Fixture_id (0.103) unexpectedly ranks high, potentially due to recurring patterns in specific match-ups. Away and home assists (0.065, 0.059) emphasize the role of team coordination in influencing results, underscoring soccer's collaborative nature. Meanwhile, features like minute and halftime hold negligible predictive power (~0.000), indicating their limited direct impact. Overall, the model effectively captures logical relationships while revealing biases in certain match patterns.
 
@@ -281,7 +290,8 @@ print(f"Draw Error Rate: {draw_error:.4f}\n")
 
 print(f"Actual Away Probability Mean: {mean_away:.4f}")
 print(f"Predicted Away Probability Mean: {mean_pred_away:.4f}")
-print(f"Away Error Rate: {away_error:.4f}")```
+print(f"Away Error Rate: {away_error:.4f}")
+```
 
 The comparison of actual and predicted probabilities shows minimal error rates for all outcomes, with the home win having an error of 0.0045, the draw at 0.0084, and the away win at 0.0129. These low error rates suggest that the decision tree model effectively predicts probabilities close to the actual averages. However, the slightly higher deviation in the away win probabilities might indicate inefficiencies in capturing specific match dynamics, possibly due to less impactful features or unmodeled randomness. Overall, the model aligns well with the actual data, reinforcing its reliability in predicting match outcomes.
 
