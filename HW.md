@@ -26,7 +26,8 @@
  TO ACCESS JUPYTER NOTEBOOK CLICK HERE -> [Fatih Berker Akyıldız's Jupyter Notebook](https://github.com/BU-IE-582/fall-24-fbaakyildiz/blob/main/hw2.ipynb)
  **1**
 **Initialization** 
-```# Remove rows where 'suspended' or 'stopped' is True
+```python
+# Remove rows where 'suspended' or 'stopped' is True
 data = data[(data['suspended'] == False) & (data['stopped'] == False)]
 
 # Identify columns with missing values and count them
@@ -49,7 +50,8 @@ We cleaned the dataset by removing unreliable rows where 'suspended' or 'stopped
 
 **Task 1.1** 
 
-```# Calculate probabilities for home win, draw, and away win
+```python
+# Calculate probabilities for home win, draw, and away win
 data['home_prob'] = 1 / data['1']
 data['draw_chance'] = 1 / data['X']
 data['away_prob'] = 1 / data['2']
@@ -64,7 +66,8 @@ data['normalized_away_prob'] = data['away_prob'] / data['total_probability']
 data['home_away_diff'] = data['normalized_home_prob'] - data['normalized_away_prob']```
 
 **Task 1.2** 
-```# Create bin intervals between -1 and 1
+```python
+# Create bin intervals between -1 and 1
 bin_intervals = np.linspace(-1, 1, 21)
 data['diff_bin'] = pd.cut(data['home_away_diff'], bins=bin_intervals)
 
@@ -79,7 +82,8 @@ bin_analysis = data.groupby('diff_bin').agg(
 print(bin_analysis)```
 
 **Task 1.3**
-```# Separate first-half and second-half data
+```python
+# Separate first-half and second-half data
 first_half_data = data[data['halftime'] == '1st-half']
 second_half_data = data[data['halftime'] == '2nd-half']
 
@@ -102,7 +106,8 @@ When comparing the first and second halves, the second half appears to exhibit a
 
 
 **TASK 2**
-```# Filter out matches with late goals
+```python
+# Filter out matches with late goals
 late_goal_games = data[(data['minute'] > 45) & (data['halftime'] == '2nd-half')]
 matches_to_remove_late = pd.concat([late_goal_games['fixture_id']]).unique()
 filtered_data = data[~data['fixture_id'].isin(matches_to_remove_late)]
@@ -145,7 +150,8 @@ The second half shows a significant increase in draw probabilities, particularly
 Filtering disruptive events like late goals and early red cards provides a cleaner view of these tendencies, highlighting the core dynamics of football matches in their natural state.
 
 **TASK 3**
-```# Drop unnecessary columns and prepare for decision tree
+```python
+# Drop unnecessary columns and prepare for decision tree
 label_encoder = LabelEncoder()
 data['halftime'] = label_encoder.fit_transform(data['halftime'].astype(str))
 data['result'] = label_encoder.fit_transform(data['result'].astype(str))
@@ -178,7 +184,8 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=label_encoder.cla
 plt.title("Confusion Matrix")
 plt.show()```
 
-```# Analyze misclassified samples
+```python
+# Analyze misclassified samples
 misclassified_indices = np.where(y_test != y_pred)[0]
 misclassified_samples = X_test.iloc[misclassified_indices]
 misclassified_samples['true_label'] = y_test.iloc[misclassified_indices].values
@@ -194,7 +201,8 @@ error_summary = time_analysis.groupby(['halftime', 'minute', 'true_label', 'pred
 print("Summary of misclassifications:")
 print(error_summary)```
 
-```# Select relevant columns for time analysis
+```python
+# Select relevant columns for time analysis
 time_analysis = misclassified_samples[['minute', 'halftime', 'true_label', 'predicted_label']]
 
 # Group by halftime, minute, and label combinations
@@ -225,7 +233,8 @@ print(minute_error_summary)```
 
 The decision tree achieved nearly 96% accuracy, but misclassifications highlight trends in specific game periods. Errors are most common in the early minutes (e.g., 3rd, 4th, and 6th minutes) due to limited early-game data, leading the model to rely on pre-game probabilities. The range of errors spans from the start to minute 56, with more errors in the first half (446 vs. 270 in the second half). Key minutes, such as the first 10, account for the highest errors, indicating that additional features or real-time data could improve model predictions during these periods.
 
-```# Feature Importance
+```python
+# Feature Importance
 feature_importances = pd.DataFrame({
     'Feature': X.columns,
     'Importance': clf.feature_importances_
@@ -235,12 +244,14 @@ feature_importances = pd.DataFrame({
 feature_importances = feature_importances.sort_values(by='Importance', ascending=False)
 print("Feature Importances:")
 print(feature_importances)```
+
 The feature importance analysis highlights P_diff (0.192) as the most critical predictor, reflecting its alignment with probability-driven match outcomes. Fixture_id (0.103) unexpectedly ranks high, potentially due to recurring patterns in specific match-ups. Away and home assists (0.065, 0.059) emphasize the role of team coordination in influencing results, underscoring soccer's collaborative nature. Meanwhile, features like minute and halftime hold negligible predictive power (~0.000), indicating their limited direct impact. Overall, the model effectively captures logical relationships while revealing biases in certain match patterns.
 
 
 **CONCLUSION**
 
-```y_prob = clf.predict_proba(X_test)
+```python
+y_prob = clf.predict_proba(X_test)
 predicted_home_prob = y_prob[:, label_encoders['result'].transform(['1'])[0]]
 predicted_away_prob = y_prob[:, label_encoders['result'].transform(['2'])[0]]
 predicted_draw_prob = y_prob[:, label_encoders['result'].transform(['X'])[0]]
